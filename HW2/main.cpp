@@ -35,9 +35,7 @@ bool pwd_check() {
 
 
 int main(int argc, char* argv[]) {
-
-	
-	
+		
 
 	if (argc != 3) {
 
@@ -50,12 +48,14 @@ int main(int argc, char* argv[]) {
 
 	if(mode == "encryption"){
 	
-		std::ofstream out(argv[2]);
+		std::ofstream out(argv[2], std::ios::binary | std::ios::out);
 		std::string data = "";
 
 		std::cout << "Enter a string to be cyphered\n";
 	
 		std::getline(std::cin, data);
+
+		const size_t dataSize = data.size();
 
 		if (!pwd_check()) {
 
@@ -64,30 +64,49 @@ int main(int argc, char* argv[]) {
 
 		}
 
-		char* output = gamma_infliction(data.data(), key, data.size());
+		char* output = gamma_infliction(data.data(), key, dataSize);	
+		cyclic_shiftR(output, 4, dataSize);
 
-		for (size_t i = 0; i < data.size(); i++)
-			out << output[i];
+		out.write(output, dataSize);
 
-		out << std::endl;
+		out.close();
 
-		char* output2 = gamma_infliction(output, key, data.size());
-
-		for (size_t i = 0; i < data.size(); i++)
-			out << output2[i];
-		
-		out << std::endl;
-
-		cyclic_shift(output, 4, data.size());
-
-		for (size_t i = 0; i < data.size(); i++)
-			out << output[i];
-
-	//	delete[] output;
+		delete[] output;
 
 	}
-	else if (argv[1] == "decryption") {
+	else if (mode == "decryption") {
 
+		std::ifstream in(argv[2], std::ios::in | std::ios::binary);
+
+		if (!in.is_open()) {
+
+			std::cout << "The path to the file is invalid\n";
+			return 4;
+
+		}
+		
+		
+		in.seekg(0, std::ios::end);
+		const size_t dataSize = in.tellg();
+		in.seekg(0, std::ios::beg);
+		
+		char* buffer = new char[dataSize];
+		std::string data = "";
+				
+		in.read(buffer, dataSize);
+		data.append(buffer);
+
+		delete[] buffer;
+
+		std::cout << dataSize << std::endl;
+		char* output = const_cast<char*>(data.data());
+
+		cyclic_shiftL(output, 4, dataSize);
+		output = gamma_infliction(output, key, dataSize + 1);
+		output[dataSize] = '\0';
+		std::cout << output << std::endl;
+
+		delete[] output;
 
 	}
 	else {
