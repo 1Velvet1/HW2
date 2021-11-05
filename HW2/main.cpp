@@ -15,16 +15,16 @@ bool pwd_check() {
 		std::cin >> pwd;
 
 		if (pwd == password) {
-			
+
 			return true;
 
 		}
-		else { 
-			
+		else {
+
 			std::cout << "Invalid password. Tries left: " << 4 - numOfTries << std::endl;
-			
-			numOfTries++; 
-		
+
+			numOfTries++;
+
 		}
 
 	}
@@ -36,26 +36,26 @@ bool pwd_check() {
 
 int main(int argc, char* argv[]) {
 
-	
-	
 
 	if (argc != 3) {
 
 		std::cout << "Invalid number of arguements\n2 should be given\n";
 		return 1;
 
-	}	
-	
+	}
+
 	std::string mode = argv[1];
 
-	if(mode == "encryption"){
-	
-		std::ofstream out(argv[2]);
+	if (mode == "encryption") {
+
+		std::ofstream out(argv[2], std::ios::binary | std::ios::out);
 		std::string data = "";
 
 		std::cout << "Enter a string to be cyphered\n";
-	
+
 		std::getline(std::cin, data);
+
+		const size_t dataSize = data.size();
 
 		if (!pwd_check()) {
 
@@ -64,30 +64,53 @@ int main(int argc, char* argv[]) {
 
 		}
 
-		char* output = gamma_infliction(data.data(), key, data.size());
+		char* output = gamma_infliction(data.data(), key, dataSize);
+		cyclic_shiftR(output, 4, dataSize);
 
-		for (size_t i = 0; i < data.size(); i++)
-			out << output[i];
+		out.write(output, dataSize);
 
-		out << std::endl;
+		out.close();
 
-		char* output2 = gamma_infliction(output, key, data.size());
-
-		for (size_t i = 0; i < data.size(); i++)
-			out << output2[i];
-		
-		out << std::endl;
-
-		cyclic_shift(output, 4, data.size());
-
-		for (size_t i = 0; i < data.size(); i++)
-			out << output[i];
-
-	//	delete[] output;
+		delete[] output;
 
 	}
-	else if (argv[1] == "decryption") {
+	else if (mode == "decryption") {
 
+		std::ifstream in(argv[2], std::ios::in | std::ios::binary);
+
+		if (!in.is_open()) {
+
+			std::cout << "The path to the file is invalid\n";
+			return 4;
+
+		}
+
+		if (!pwd_check()) {
+
+			std::cout << "You failed to enter a password!\n";
+			return 3;
+
+		}
+
+		in.seekg(0, std::ios::end);
+		const size_t dataSize = in.tellg();
+		in.seekg(0, std::ios::beg);
+
+		char* data = new char[dataSize];
+
+		in.read(data, dataSize);
+
+		std::cout << dataSize << std::endl;
+
+		char* output = data;
+
+		cyclic_shiftL(data, 4, dataSize);
+		output = gamma_infliction(data, key, dataSize + 1);
+		output[dataSize] = '\0';
+		std::cout << output << std::endl;
+
+		delete[] data;
+		delete[] output;
 
 	}
 	else {
