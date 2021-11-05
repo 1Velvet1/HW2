@@ -12,7 +12,8 @@ const unsigned password = 391452;
 
 char* gamma_infliction(char const* initData, const unsigned key, size_t strLength);
 
-void cyclic_shift(char* data, unsigned const shiftVal, size_t len);
+void cyclic_shiftR(char* data, unsigned const shiftVal, size_t len);
 
+void cyclic_shiftL(char* data, unsigned const shiftVal, size_t len);
 
 #endif
