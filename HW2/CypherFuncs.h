@@ -1,8 +1,7 @@
 #include <cstdlib>
 #include <random>
-#include <iostream>
-#include <Windows.h>
 #include <string>
+#include <Windows.h>
 
 #ifndef CYPHERFUNCS___H
 #define CYPHERFUNCS___H

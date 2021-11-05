@@ -100,8 +100,6 @@ int main(int argc, char* argv[]) {
 
 		in.read(data, dataSize);
 
-		std::cout << dataSize << std::endl;
-
 		char* output = data;
 
 		cyclic_shiftL(data, 4, dataSize);
