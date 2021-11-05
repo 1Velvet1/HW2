@@ -68,7 +68,7 @@ int main(int argc, char* argv[]) {
 		cyclic_shiftR(output, 4, dataSize);
 
 		out.write(output, dataSize);
-
+		
 		out.close();
 
 		delete[] output;
@@ -84,7 +84,13 @@ int main(int argc, char* argv[]) {
 			return 4;
 
 		}
-		
+
+		if (!pwd_check()) {
+
+			std::cout << "You failed to enter a password!\n";
+			return 3;
+
+		}
 		
 		in.seekg(0, std::ios::end);
 		const size_t dataSize = in.tellg();
@@ -93,8 +99,12 @@ int main(int argc, char* argv[]) {
 		char* buffer = new char[dataSize];
 		std::string data = "";
 				
-		in.read(buffer, dataSize);
-		data.append(buffer);
+		while (in) {
+
+			in.read(buffer, 500);
+			data.append(buffer);
+
+		}
 
 		delete[] buffer;
 
