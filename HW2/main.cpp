@@ -96,26 +96,20 @@ int main(int argc, char* argv[]) {
 		const size_t dataSize = in.tellg();
 		in.seekg(0, std::ios::beg);
 		
-		char* buffer = new char[dataSize];
-		std::string data = "";
-				
-		while (in) {
+		char* data = new char[dataSize];
 
-			in.read(buffer, 500);
-			data.append(buffer);
-
-		}
-
-		delete[] buffer;
+		in.read(data, dataSize);
 
 		std::cout << dataSize << std::endl;
-		char* output = const_cast<char*>(data.data());
+				
+		char* output = data;
 
-		cyclic_shiftL(output, 4, dataSize);
-		output = gamma_infliction(output, key, dataSize + 1);
+		cyclic_shiftL(data, 4, dataSize);
+		output = gamma_infliction(data, key, dataSize + 1);
 		output[dataSize] = '\0';
 		std::cout << output << std::endl;
 
+		delete[] data;
 		delete[] output;
 
 	}
